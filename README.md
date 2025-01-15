@@ -15,7 +15,13 @@ Plus accumulator, counter, and instruction pointer.
 
 ## Differences between the emulator and the prototype.
 
-Output = in ASCII, only one output device.
+Input instruction: need a way to differentiate between nibble reads and word reads.
+Perhaps add an operand: if 0 then read 1 byte, discard top nibble and store bottom nibble
+if 1 then read whole word.
+
+Output = writes bytes. Bottom 8 of address are what to output. Top 3 are device (0 is tape, 1-6 are stdout).
+
+These two changes mean that programs restored from punch tape will need some changes in order to work... but they needed changes to work anyway.
 
 Also has the ability to load the machine's memory with a rom file, to avoid having to load via 'paper tape'.
 
@@ -23,27 +29,25 @@ The conditional transfer doesn't use the Z physical switch (because there isn't 
 
 ## Intended Usage
 
-snocom -b biosfile.rom < intape.txt > outtype.txt -d 2048
+snocom -r biosfile.rom -i intape.txt -o outtype.txt -d
 
--b overwrites the autoloader with a custom memory image.
+-r overwrites the autoloader with a custom memory image.
 
--i is the input tape file
+-i is the input tape file (required)
 
 -o is the output tape file
 
--d dumps the contents of memory after the specified number of clock cycles (to aid with debugging)
+-dX is the debug verbosity level
 
-registerfile.2048
-memorydump.2048
+-v shows version info
+
+-h shows help info
 
 typewriter goes to stdout
 
-z switch is on stdin
-
-biosfile is generally the 3-word autoload sequence
+z switch is on stdin, with stderr used for outputting debugging messages or asking for Z switch input.
 
 Starts at IP 0.
-stdio is used instead of typewriter and paper tape, redirection can be used for file.
 
 ## Compilation
 
