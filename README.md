@@ -12,6 +12,12 @@ Plus accumulator, counter, and instruction pointer.
 
 snocom -b biosfile.rom < intape.txt > outtype.txt -d 2048
 
+-b overwrites the autoloader with a custom memory image.
+
+-i is the input tape file
+
+-o is the output typewriter file
+
 -d dumps the contents of memory after the specified number of clock cycles (to aid with debugging)
 
 registerfile.2048
