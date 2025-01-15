@@ -4,7 +4,15 @@
 unsigned int memory[2048];
 unsigned int accumulator;
 unsigned int counter;
-unsigned int instructionpointer;
+unsigned int instructionpointer = 0;
+
+int decodeInstruction() {
+    int word = memory[instructionpointer];
+
+    int instruction = (word & 0x00F00000) >> 20;
+
+    return instruction;
+}
 
 int main(int argc, char** argv) {
 
@@ -33,6 +41,27 @@ int main(int argc, char** argv) {
     fclose(bios); 
 
     printf("Read %d words of ROM.\n", i);
+
+    // main computer loop
+    int run = 1;
+    while(run) {
+        printf("ip: %#010x\n", memory[instructionpointer]);
+
+        int instruction = decodeInstruction();
+
+        switch(instruction) {
+            case 0: // stop
+                run = 0;
+                printf("Stop\n");
+                break;
+
+            default:
+                printf("Instruction: %d\n", instruction);
+                break;
+        }
+
+        instructionpointer++;
+    }
 
     return 0;
 }
