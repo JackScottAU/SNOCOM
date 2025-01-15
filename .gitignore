@@ -1,3 +1,4 @@
 snocom
 *.o
 outfile.bin
+infile.bin
