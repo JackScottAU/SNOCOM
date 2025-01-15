@@ -32,6 +32,8 @@ int decodeAddressOfAccumulator() {
 
 int main(int argc, char** argv) {
 
+    int debuggingMode = 0;
+
     char* romFileName = NULL;
     char* inTapeName = NULL;
     char* outTapeName = NULL;
@@ -48,6 +50,10 @@ int main(int argc, char** argv) {
             exit(0);
         }
 
+        if(strcmp(argv[i], "-d") == 0) {
+            debuggingMode = 1;
+        }
+
         if(strcmp(argv[i], "-r") == 0) {
             romFileName = argv[i+1];
         }
@@ -62,20 +68,9 @@ int main(int argc, char** argv) {
     }
 
 
-    FILE *bios;
-    FILE *infile;
-    FILE *outfile;
+    FILE *infile = fopen(inTapeName, "rb");
+    FILE *outfile = fopen(outTapeName, "wb");
 
-    printf("rom file name: %s\n", romFileName);
-
-    bios = fopen(romFileName, "rb");
-    infile = fopen(inTapeName, "rb");
-    outfile = fopen(outTapeName, "wb");
-
-    if(bios == NULL) {
-        printf("No BIOS found.\n");
-        return -1;
-    }
 
     if(infile == NULL) {
         printf("No input tape found.\n");
@@ -87,40 +82,92 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    // load tape autoloader into memory (though it might be overwritten).
-    memory[0] = 0x00400000;
-    memory[1] = 0x00C00030;
-    memory[2] = 0x00400000;
-
-    // load bios into rom.
-    int i = 0;
-    while(1)
+    
+    if(romFileName != NULL) 
     {
+        FILE *bios = fopen(romFileName, "rb");
 
-        int readwords = fread(&memory[i], sizeof(unsigned int), 1, bios); 
-
-        if(!readwords) {
-            break;
+        if(bios == NULL) {
+            printf("No BIOS found.\n");
+            return -1;
         }
+        // load bios into rom.
+        int i = 0;
+        while(1)
+        {
 
-        i++;
+            int readwords = fread(&memory[i], sizeof(unsigned int), 1, bios); 
+
+            if(!readwords) {
+                break;
+            }
+
+            i++;
+        }
+        fclose(bios); 
+
+        if(debuggingMode) {
+            printf("Read %d words of ROM.\n", i);
+        }
+    } 
+    else 
+    {
+        // load tape autoloader into memory 
+        memory[0] = 0x00400000;
+        memory[1] = 0x00C00030;
+        memory[2] = 0x00400000;
+
     }
-    fclose(bios); 
 
-    printf("Read %d words of ROM.\n", i);
+    
 
     // main computer loop
     int run = 1;
+    int breakpoint = 0;
     while(run) {
       //  printf("ip: %#010x, instruction: %#010x\n", instructionpointer, memory[instructionpointer]);
 
         int instruction = decodeInstruction();
         int address = decodeAddress();
 
-        switch(instruction) {
+        if(breakpoint) {
+            printf("BREAKPOINT. IP: %#010x. ACC: %#010x\n", instructionpointer, accumulator);
+            printf("[S]ingle Step, [C]ontinue, or [Q]uit? ");
+
+            char a;
+            scanf("%c", &a);
+            printf("\n");
+
+            switch(a) {
+                case 'Q':
+                case 'q':
+                    run = 0;
+                    break;
+
+                case 'C':
+                case 'c':
+                    breakpoint = 0;
+                    break;
+
+                case 'S':
+                case 's':
+                default:
+                    // do nothing here.
+                    break;
+            }
+        }
+
+    // to give us the option of exiting after a breakpoint.
+        if(run) {
+            switch(instruction) {
             case 0: // stop - TODO: this is actually supposed to be a breakpoint.
-                printf("STOP\n");
-                run = 0;
+                
+                if(debuggingMode) {
+                    breakpoint = 1;
+                } else {
+                    run = 0;
+                }
+
                 break;
 
             
@@ -137,8 +184,16 @@ int main(int argc, char** argv) {
                 break;
 
             case 8: // output
+                char output = (char)(address & 0xFF);
+
+                if(memory[instructionpointer] & 0x80000000) {
+                    // z-mode = typewriter
+                    putchar(output); // for now assume it's less than 8 bits.
+                } else {
+                    fwrite(&output, 1, 1, outfile);
+                }
               //  printf("%d\n", (address >> 4) & 0xFF);
-                putchar((char)address); // for now assume it's less than 8 bits.
+                
                 break;
                 
             case 12: // store
@@ -174,6 +229,15 @@ int main(int argc, char** argv) {
                 break;
                 
             case 11: // conditional transfer - note this has a sub instruction where we will need to wait for user input
+                if(instruction & 0x80000000) {
+                    // Z mode
+                    printf("Do Z-mode jump (y/n)? ");
+                    char y; scanf("%c", &y);
+                    if(y == 'y' || y == 'Y') {
+                        instructionpointer = address;
+                    }
+                }
+
                 if(accumulator & 0x80000000) {
                     instructionpointer = address;
                 }
@@ -206,13 +270,25 @@ int main(int argc, char** argv) {
                 printf("set return address\n");
 
             case 5: // divide
+                accumulator = memory[address] / accumulator;
+                printf("DIV: ACCUMULATOR = %#010x\n", accumulator);
+                break;
+
             case 6: // multiply integers
+                accumulator = memory[address] * accumulator;
+                printf("MUL: ACCUMULATOR = %#010x\n", accumulator);
+                break;
+
             case 7: // multiply fractions
+                printf("INCOMPLETE INSTRUCTION (multiple fraction)");
+                break;
 
             default:
                 printf("Instruction: %d\n", instruction);
                 break;
         }
+        }
+        
 
         instructionpointer++;
     }

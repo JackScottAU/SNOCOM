@@ -21,9 +21,9 @@ Runs a hello world program from rom.
 
 Input instruction: need a way to differentiate between nibble reads and word reads.
 Perhaps add an operand: if 0 then read 1 byte, discard top nibble and store bottom nibble
-if 1 then read whole word.
+if 1 then read whole word. Use z-mode flag to determine how much to write.
 
-Output = writes bytes. Bottom 8 of address are what to output. Top 3 are device (0 is tape, 1-6 are stdout).
+Output = writes bytes. Bottom 8 of address are what to output. Uses Z-mode flag to determine which output device to use (Z set = typewriter, stdout)
 
 These two changes mean that programs restored from punch tape will need some changes in order to work... but they needed changes to work anyway.
 
@@ -31,7 +31,7 @@ Also has the ability to load the machine's memory with a rom file, to avoid havi
 
 The conditional transfer doesn't use the Z physical switch (because there isn't one), it asks via stdin what to do.
 
-## Intended Usage
+## Usage
 
     snocom [-r biosfile.rom] -i intape.txt -o outtype.txt -d
 
@@ -39,9 +39,9 @@ The conditional transfer doesn't use the Z physical switch (because there isn't 
 
 -i is the input tape file (required)
 
--o is the output tape file
+-o is the output tape file (required)
 
--dX is the debug verbosity level
+-d specifies debugging mode, where a STOP instruction will enter the debugger rather than quitting.
 
 -v shows version info
 
@@ -49,9 +49,9 @@ The conditional transfer doesn't use the Z physical switch (because there isn't 
 
 typewriter goes to stdout
 
-z switch is on stdin, with stderr used for outputting debugging messages or asking for Z switch input.
+### Samples
 
-Starts at IP 0.
+helloworld.bin prints "Hello world" to output tape.
 
 ## Compilation
 
