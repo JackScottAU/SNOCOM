@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
     FILE *infile;
     FILE *outfile;
 
-    bios = fopen("bios.rom", "rb");
+    bios = fopen("helloworld.bin", "rb");
     infile = fopen("infile.bin", "rb");
     outfile = fopen("outfile.bin", "wb");
 
@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
     // main computer loop
     int run = 1;
     while(run) {
-        printf("ip: %#010x, instruction: %#010x\n", instructionpointer, memory[instructionpointer]);
+      //  printf("ip: %#010x, instruction: %#010x\n", instructionpointer, memory[instructionpointer]);
 
         int instruction = decodeInstruction();
         int address = decodeAddress();
@@ -89,6 +89,7 @@ int main(int argc, char** argv) {
                 break;
 
             case 8: // output
+              //  printf("%d\n", (address >> 4) & 0xFF);
                 putchar((char)address); // for now assume it's less than 8 bits.
                 break;
                 

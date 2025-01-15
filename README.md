@@ -13,6 +13,10 @@ Plus accumulator, counter, and instruction pointer.
 3.  Get remaining programs from the NMA into ROM files.
 4.  Build a physical SNOCOM.
 
+## Current Status
+
+Runs a hello world program from rom.
+
 ## Differences between the emulator and the prototype.
 
 Input instruction: need a way to differentiate between nibble reads and word reads.
@@ -67,21 +71,17 @@ https://www.pearcey.org.au/blog/2020/snocom-and-cirrus/
 
 https://ses.library.usyd.edu.au/handle/2123/16005
 
-### sexadecimal:
+### Sexadecimal
 
 Not as fun as it sounds.
 
 0 to 9 as they are
 
-1010 A = +
-
-1011 B = -
-
-1100 C = N
-
-1101 D = J
-
-1110 E = F
-
-1111 F = L
-
+| Binary | Normal Hexadecimal | Wong's Sexadecimal |
+| ------ | ------------------ | ------------------ |
+| 1010   | A                  | +                  |
+| 1011   | B                  | -                  |
+| 1100   | C                  | N                  |
+| 1101   | D                  | J                  |
+| 1110   | E                  | F                  |
+| 1111   | F                  | L                  |
