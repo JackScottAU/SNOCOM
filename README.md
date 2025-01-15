@@ -6,6 +6,13 @@ Designed to emulate the SNOCOM computer built in 1960 by David Wong from Sydney 
 
 Plus accumulator, counter, and instruction pointer.
 
+## Goals
+
+1.  Write a fully functional SNOCOM emulator.
+2.  Write an assembler for SNOCOM.
+3.  Get remaining programs from the NMA into ROM files.
+4.  Build a physical SNOCOM.
+
 ## Differences between the emulator and the prototype.
 
 Output = in ASCII, only one output device.
@@ -47,6 +54,8 @@ You'll need a little endian computer, make and gcc.
 ## License, Contributing, etc
 
 ISC License
+
+Pull requests welcome.
 
 ## Resources
 
