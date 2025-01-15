@@ -33,9 +33,9 @@ The conditional transfer doesn't use the Z physical switch (because there isn't 
 
 ## Intended Usage
 
-snocom -r biosfile.rom -i intape.txt -o outtype.txt -d
+    snocom [-r biosfile.rom] -i intape.txt -o outtype.txt -d
 
--r overwrites the autoloader with a custom memory image.
+-r overwrites the tape autoloader with a custom memory image. Without a rom image specified, it will use Wong's tape autoloader as specified in his thesis.
 
 -i is the input tape file (required)
 

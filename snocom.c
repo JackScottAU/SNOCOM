@@ -1,5 +1,6 @@
 #include <stdio.h>
-
+#include <string.h>
+#include <stdlib.h>
 
 unsigned int memory[2048];
 unsigned int accumulator = 0;
@@ -31,18 +32,65 @@ int decodeAddressOfAccumulator() {
 
 int main(int argc, char** argv) {
 
+    char* romFileName = NULL;
+    char* inTapeName = NULL;
+    char* outTapeName = NULL;
+
+    for(int i = 0; i < argc; i++) {
+        if(strcmp(argv[i], "-v") == 0) {
+            printf("SNOCOM Emulator v0.0.1\n");
+            exit(0);
+        }
+
+        if(strcmp(argv[i], "-h") == 0) {
+            printf("SNOCOM Emulator v0.0.1\n");
+            printf("Usage: snocom -i INPUTTAPE -o OUTPUTTAPE [-r ROMFILE]\n");
+            exit(0);
+        }
+
+        if(strcmp(argv[i], "-r") == 0) {
+            romFileName = argv[i+1];
+        }
+
+        if(strcmp(argv[i], "-i") == 0) {
+            inTapeName = argv[i+1];
+        }
+
+        if(strcmp(argv[i], "-o") == 0) {
+            outTapeName = argv[i+1];
+        }
+    }
+
+
     FILE *bios;
     FILE *infile;
     FILE *outfile;
 
-    bios = fopen("helloworld.bin", "rb");
-    infile = fopen("infile.bin", "rb");
-    outfile = fopen("outfile.bin", "wb");
+    printf("rom file name: %s\n", romFileName);
+
+    bios = fopen(romFileName, "rb");
+    infile = fopen(inTapeName, "rb");
+    outfile = fopen(outTapeName, "wb");
 
     if(bios == NULL) {
         printf("No BIOS found.\n");
         return -1;
     }
+
+    if(infile == NULL) {
+        printf("No input tape found.\n");
+        return -1;
+    }
+
+    if(outfile == NULL) {
+        printf("No output tape found.\n");
+        return -1;
+    }
+
+    // load tape autoloader into memory (though it might be overwritten).
+    memory[0] = 0x00400000;
+    memory[1] = 0x00C00030;
+    memory[2] = 0x00400000;
 
     // load bios into rom.
     int i = 0;
