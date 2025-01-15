@@ -4,13 +4,13 @@ Designed to emulate the SNOCOM computer built in 1960 by David Wong from Sydney 
 
 8KiB (2048 32-bit words)
 
-Plus accumulator, counter, and instruction pointer.
+Plus accumulator and instruction pointer.
 
 ## Goals
 
 1.  Write a fully functional SNOCOM emulator.
 2.  Write an assembler for SNOCOM.
-3.  Get remaining programs from the NMA into ROM files.
+3.  Get remaining programs from the NMA into ROM and tape files.
 4.  Build a physical SNOCOM.
 
 ## Current Status
@@ -52,6 +52,8 @@ typewriter goes to stdout
 ### Samples
 
 helloworld.bin prints "Hello world" to output tape.
+
+helloworld_typewriter.bin does the same thing to the stdout typewriter.
 
 ## Compilation
 
