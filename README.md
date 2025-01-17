@@ -55,6 +55,40 @@ helloworld.bin prints "Hello world" to output tape.
 
 helloworld_typewriter.bin does the same thing to the stdout typewriter.
 
+## An assembler
+
+Use https://github.com/hlorenzi/customasm
+
+    #ruledef
+    {
+        bring {mem: u11}	=> 0b00000000 @ 0b0001 @ 0b00000 @ mem @ 0b0000
+        
+        add	{mem: u11}		=> 0b00000000 @ 0b1110 @ 0b00000 @ mem @ 0b0000
+        sub	{mem: u11}		=> 0b00000000 @ 0b1111 @ 0b00000 @ mem @ 0b0000
+        mulf {mem: u11}		=> 0b00000000 @ 0b0111 @ 0b00000 @ mem @ 0b0000
+        muli {mem: u11}		=> 0b00000000 @ 0b0110 @ 0b00000 @ mem @ 0b0000
+        div {mem: u11}		=> 0b00000000 @ 0b0101 @ 0b00000 @ mem @ 0b0000
+        extract {mem: u11}	=> 0b00000000 @ 0b1001 @ 0b00000 @ mem @ 0b0000
+        
+        jump {mem: u11}		=> 0b00000000 @ 0b1010 @ 0b00000 @ mem @ 0b0000
+        jneg {mem: u11}		=> 0b00000000 @ 0b1011 @ 0b00000 @ mem @ 0b0000
+        jnegz {mem: u11}	=> 0b10000000 @ 0b1011 @ 0b00000 @ mem @ 0b0000
+        
+        store {mem: u11} 	=> 0b00000000 @ 0b1100 @ 0b00000 @ mem @ 0b0000
+        storec {mem: u11} 	=> 0b00000000 @ 0b1101 @ 0b00000 @ mem @ 0b0000
+        storea {mem: u11} 	=> 0b00000000 @ 0b0010 @ 0b00000 @ mem @ 0b0000
+        redadd {mem: u11} 	=> 0b00000000 @ 0b0011 @ 0b00000 @ mem @ 0b0000
+        
+        input nibble {mem: u11}		=> 0b00000000 @ 0b1110 @ 0b00000 @ mem @ 0b0000
+        input word {mem: u11}		=> 0b10000000 @ 0b1110 @ 0b00000 @ mem @ 0b0000
+        
+        output tape {char: u8}		=> 0b00000000 @ 0b1000 @ 0b00000000 @ char @ 0b0000
+        output type {char: u8}		=> 0b10000000 @ 0b1000 @ 0b00000000 @ char @ 0b0000
+        
+        stop				=> 0x00000000
+    }
+
+
 ## Compilation
 
 You'll need a little endian computer, make and gcc.
